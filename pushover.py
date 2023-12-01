@@ -201,7 +201,7 @@ class Pushover(object):
         """
 
         payload = {"message": message, "user": user, "token": self.token}
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key not in Pushover.message_keywords:
                 raise ValueError("{0}: invalid message parameter".format(key))
             elif key == "timestamp" and value is True:

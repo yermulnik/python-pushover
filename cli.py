@@ -11,7 +11,7 @@ def read_config(config_path):
     files = config.read(config_path)
     if not files:
         return params
-    params["token"] = config.get("main", "token")
+    params["token"] = config.get("Default", "api_token")
     for name in config.sections():
         if name != "main":
             user = {}
@@ -33,8 +33,10 @@ For more details and bug reports, see: https://github.com/Thibauth/python-pushov
     )
     parser.add_argument("--token", help="API token")
     parser.add_argument(
+        "--profile",
         "--user",
         "-u",
+        dest="user",
         help="User key or section name in the configuration",
         required=True,
     )
@@ -49,6 +51,7 @@ For more details and bug reports, see: https://github.com/Thibauth/python-pushov
     parser.add_argument("--url", help="additional url")
     parser.add_argument("--url-title", help="url title")
     parser.add_argument("--title", "-t", help="message title")
+    parser.add_argument("--sound", "-s", help="message sound")
     parser.add_argument(
         "--priority", "-p", help="notification priority (-1, 0, 1 or 2)", type=int
     )
@@ -94,6 +97,7 @@ There is NO WARRANTY, to the extent permitted by law.""",
         args.message,
         device=device,
         title=args.title,
+        sound=args.sound,
         priority=args.priority,
         url=args.url,
         url_title=args.url_title,

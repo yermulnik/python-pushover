@@ -11,15 +11,14 @@ def read_config(config_path):
     files = config.read(config_path)
     if not files:
         return params
+    params["user_key"] = config.get("Default", "user_key")
     params["token"] = config.get("Default", "api_token")
     for name in config.sections():
         if name != "main":
             user = {}
-            user["user_key"] = config.get(name, "user_key")
-            try:
-                user["device"] = config.get(name, "device")
-            except NoOptionError:
-                user["device"] = None
+            user["user_key"] = config.get(name, "user_key", fallback=params["user_key"])
+            user["token"] = config.get(name, "api_token")
+            user["device"] = config.get(name, "device", fallback=None)
             params["users"][name] = user
     return params
 
@@ -86,17 +85,18 @@ There is NO WARRANTY, to the extent permitted by law.""",
         parser.error("priority of 2 requires expire and retry")
     if args.user in params["users"]:
         user_key = params["users"][args.user]["user_key"]
+        token = params["users"][args.user]["token"]
         device = params["users"][args.user]["device"]
     else:
-        user_key = args.user
+        user_key = args.user or params["user_key"]
+        token = args.token or params["token"]
         device = None
-    token = args.token or params["token"]
 
     Pushover(token).message(
         user_key,
         args.message,
         device=device,
-        title=args.title,
+        title=args.title or args.user,
         sound=args.sound,
         priority=args.priority,
         url=args.url,
